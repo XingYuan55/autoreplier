@@ -169,35 +169,64 @@ class AiAutoReplier:
         try:
             win32clipboard.OpenClipboard()
             try:
-                data = win32clipboard.GetClipboardData(win32clipboard.CF_TEXT)
-                return data.decode('utf-8') if data else ""
-            except:
+                # 首先尝试 Unicode 格式
+                try:
+                    data = win32clipboard.GetClipboardData(win32clipboard.CF_UNICODETEXT)
+                    if data and data.strip():
+                        return data
+                except:
+                    pass
+
+                # 如果 Unicode 失败，尝试普通文本格式
+                try:
+                    data = win32clipboard.GetClipboardData(win32clipboard.CF_TEXT)
+                    # 尝试多种编码方式
+                    encodings = ['utf-8', 'gbk', 'gb2312', 'gb18030']
+                    for encoding in encodings:
+                        try:
+                            text = data.decode(encoding)
+                            if text.strip():
+                                return text
+                        except:
+                            continue
+                except:
+                    pass
+
                 return ""
             finally:
                 win32clipboard.CloseClipboard()
         except:
+            try:
+                win32clipboard.CloseClipboard()
+            except:
+                pass
             return ""
 
-    def handle_wx_message(self):
-        """
-        处理微信新消息
-        
-        功能:
-        1. 选中并复制微信消息
-        2. 检查是否成功复制到文本内容
-        3. 将内容发送到AI聊天框
-        
-        返回:
-            bool: 处理是否成功
-        """
+    def clear_clipboard(self):
+        """清空剪贴板内容"""
         try:
-            # 先移动到微信消息位置
+            win32clipboard.OpenClipboard()
+            win32clipboard.EmptyClipboard()
+            win32clipboard.CloseClipboard()
+        except:
+            try:
+                win32clipboard.CloseClipboard()
+            except:
+                pass
+
+    def handle_wx_message(self):
+        """处理微信新消息"""
+        try:
+            # 先清空剪贴板
+            self.clear_clipboard()
+            
+            # 移动到微信消息位置
             pyautogui.moveTo(self.wx_reply_coordinate[0], self.wx_reply_coordinate[1])
             time.sleep(0.3)
             
             # 双击选中微信消息
             pyautogui.doubleClick()
-            time.sleep(0.2)
+            time.sleep(0.3)
             
             # 复制选中的内容
             pyautogui.hotkey('ctrl', 'c')
@@ -205,26 +234,30 @@ class AiAutoReplier:
             
             # 检查是否成功复制到内容
             clipboard_content = self.get_clipboard_content()
+            print(f"剪贴板内容: [{clipboard_content}]")
+            
             if not clipboard_content.strip():
                 print("未检测到文本内容，可能是表情或图片，跳过处理")
-                return False  # 返回False表示处理失败
+                self.wx_had_changed = False  # 重置状态
+                return False
             
             # 有文本内容，继续处理
             pyautogui.moveTo(self.ai_send_coordinate[0], self.ai_send_coordinate[1])
-            time.sleep(0.2)
+            time.sleep(0.3)
             pyautogui.click()
             time.sleep(0.2)
             pyautogui.hotkey('ctrl', 'v')
             time.sleep(0.2)
             pyautogui.press('enter')
             print("微信消息已发送到AI")
-            return True  # 返回True表示处理成功
+            return True
             
         except pyautogui.FailSafeException:
             raise
         except Exception as e:
             print(f"处理微信消息时出错: {e}")
-            return False  # 出错时返回False
+            self.wx_had_changed = False  # 出错时也重置状态
+            return False
 
     def handle_ai_response(self):
         """
@@ -284,5 +317,4 @@ class AiAutoReplier:
 if __name__ == "__main__":
     replier = AiAutoReplier()
     replier.start()
-
 
