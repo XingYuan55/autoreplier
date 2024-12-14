@@ -37,11 +37,23 @@ pip install pyautogui pygetwindow pillow pywin32
 
 ## 更新日志
 
+### 24041211 @ ver 1.1
+```bash
+commit (HEAD -> master)
+Author: XingYuan55 <dus0963@outlook.com>
+Date:   Sun Dec 14 9:26 2024 +0800
+    24041211 @ ver 1.1: 
+    更新：
+    1: 增加日志系统
+    2: 将配置信息移至外部JSON文件
+```
+
+
 ### 24030802 @ ver1.0-rc2
 ```bash
-commit 2d870fcbfb28525e1e57e8e68653260313f04320 (HEAD -> master)
+commit (HEAD -> master)
 Author: XingYuan55 <dus0963@outlook.com>
-Date:   Sun Dec 8 23:07:54 2024 +0800
+Date:   Sun Dec 8 23:07 2024 +0800
 
     24120802 @ ver1.0-rc2: 修复了有时发生的以下两个问题，提升程序稳定性：
     1: 光标只会移动到相应位置，在尝试复制无果后，剪贴板里不是空的，而是刚刚ai给我发的消息，然后会将AI发来的信息发回去。
@@ -70,9 +82,9 @@ Date:   Sun Dec 8 23:07:54 2024 +0800
 
 ### 24030801 @ ver1.0-rc1
 ```bash
-commit 539e78d92a8d07c62cfd486581ebdaaa470d6580
-Author: XingYuan55 <dus0963@outlook.com>
-Date:   Sun Dec 8 21:52:41 2024 +0800
+commit (HEAD -> master)
+Author: XingYuan55 <dus0963@outlook.com> 
+Date:   Sun Dec 8 21:52 2024 +0800
 
     24120801 @ ver1-rc: 已基本稳定实现功能
 ```

@@ -3,7 +3,10 @@ import threading
 import time
 import pygetwindow as gw
 from PIL import Image
-import win32clipboard  # 添加此导入
+import win32clipboard  
+import logs
+import json
+
 
 pyautogui.FAILSAFE = True  # 启用故障安全（移动到角落可以终止）
 
@@ -24,16 +27,19 @@ class AiAutoReplier:
     """
 
     def __init__(self):
-        self.ai_reply_coordinate = (147, 845)
-        self.ai_send_coordinate = (166, 977)
-        self.wx_send_coordinate = (994, 877)
-        self.wx_reply_coordinate = (1049, 792)
+        settings = self.load_settings()
+        self.ai_reply_coordinate = settings["ai_reply_coordinate"]
+        self.ai_send_coordinate = settings["ai_send_coordinate"]
+        self.wx_send_coordinate = settings["wx_send_coordinate"]
+        self.wx_reply_coordinate = settings["wx_reply_coordinate"]
 
-        self.ai_reply_window = [(337, 120), (350, 400)]
-        self.wx_reply_window = [(1040, 300), (1300, 820)]
+        self.ai_reply_window = settings["ai_reply_window"]
+        self.wx_reply_window = settings["wx_reply_window"]
 
         self.wx_had_changed = False
         self.ai_had_changed = False
+        
+        self.log = logs.logging()
         
         # 初始化并启动监控线程
         self.thread_monitor_window = threading.Thread(target=self.monitor_window, daemon=True)
@@ -109,11 +115,11 @@ class AiAutoReplier:
                 # 如果微信窗口有新消息且不在冷却期间
                 if not self.images_equal(current_wx_img, last_wx_img) and not self.wx_had_changed:
                     time_diff = current_time - last_send_time
-                    print(f"时间差: {time_diff:.2f}秒")
+                    self.log.log(f"时间差: {time_diff:.2f}秒")
                     
                     # 检查是否已经过了冷却期
                     if time_diff > cooldown_period:
-                        print("检测到微信窗口变化")
+                        self.log.log("检测到微信窗口变化", level="state")
                         if self.handle_wx_message():  # 修改：检查处理结果
                             self.wx_had_changed = True
                             self.ai_had_changed = False
@@ -121,29 +127,29 @@ class AiAutoReplier:
                         last_wx_img = current_wx_img
                         time.sleep(0.5)
                     else:
-                        print(f"冷却中，还需等待 {cooldown_period - time_diff:.2f}秒")
+                        self.log.log(f"冷却中，还需等待 {cooldown_period - time_diff:.2f}秒")
                         last_wx_img = current_wx_img
                 
                 # 只有在等待AI回复时才检查AI窗口
                 elif self.wx_had_changed and not self.ai_had_changed:
                     if not self.images_equal(current_ai_img, last_ai_img):
-                        print("AI窗口正在变化...")
+                        self.log.log("AI窗口正在变化...", level="state")
                         last_ai_img = current_ai_img
                         self.ai_stable_count = 0
                     else:
                         self.ai_stable_count += 1
                         if self.ai_stable_count == 2:
-                            print("AI回复已稳定，准备处理回复")
+                            self.log.log("AI回复已稳定，准备处理回复", level="state")
                             self.handle_ai_response()
                             last_ai_img = current_ai_img
                             self.ai_had_changed = True
                             self.wx_had_changed = False
                             self.ai_stable_count = 0
                             last_send_time = time.time()
-                            print(f"更新发送时间戳: {last_send_time:.2f}")
+                            self.log.log(f"更新发送时间戳: {last_send_time:.2f}")
 
             except pyautogui.FailSafeException:
-                print("程序已通过故障安全机制停止")
+                self.log.log("程序已通过故障安全机制停止", "key")
                 raise
 
     def images_equal(self, img1, img2):
@@ -234,10 +240,10 @@ class AiAutoReplier:
             
             # 检查是否成功复制到内容
             clipboard_content = self.get_clipboard_content()
-            print(f"剪贴板内容: [{clipboard_content}]")
+            self.log.log(f"剪贴板内容: [{clipboard_content}]")
             
             if not clipboard_content.strip():
-                print("未检测到文本内容，可能是表情或图片，跳过处理")
+                self.log.log("未检测到文本内容，可能是表情或图片，跳过处理", level="state")
                 self.wx_had_changed = False  # 重置状态
                 return False
             
@@ -249,13 +255,14 @@ class AiAutoReplier:
             pyautogui.hotkey('ctrl', 'v')
             time.sleep(0.2)
             pyautogui.press('enter')
-            print("微信消息已发送到AI")
+            self.log.log(f"微信消息内容: {clipboard_content}")
+            self.log.log("微信消息已发送到AI", level="state")
             return True
             
         except pyautogui.FailSafeException:
             raise
         except Exception as e:
-            print(f"处理微信消息时出错: {e}")
+            self.log.log(f"处理微信消息时出错: {e}", "error")
             self.wx_had_changed = False  # 出错时也重置状态
             return False
 
@@ -287,11 +294,16 @@ class AiAutoReplier:
             pyautogui.hotkey('ctrl', 'v')
             time.sleep(0.2)
             pyautogui.press('enter')
-            print("AI回复已发送到微信")
+            self.log.log(f"AI回复内容: {self.get_clipboard_content()}")
+            self.log.log("AI回复已发送到微信")
         except pyautogui.FailSafeException:
             raise
         except Exception as e:
-            print(f"处理AI回复时出错: {e}")
+            self.log.log(f"处理AI回复时出错: {e}", "error")
+            
+    def load_settings(self):
+        with open('settings.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
 
     def start(self):
         """
@@ -306,12 +318,12 @@ class AiAutoReplier:
         - Ctrl+C
         - 将鼠标移动到屏幕角落
         """
-        print("自动回复程序已启动...")
+        self.log.log("自动回复程序已启动...", "key")
         try:
             while True:
                 time.sleep(1)
         except (KeyboardInterrupt, pyautogui.FailSafeException):
-            print("程序已停止")
+            self.log.log("程序已停止", "key")
             exit(0)
 
 if __name__ == "__main__":
