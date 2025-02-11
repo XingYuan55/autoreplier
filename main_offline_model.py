@@ -6,6 +6,7 @@ from PIL import Image
 import win32clipboard  
 import logs
 import json
+import atexit
 from model.inference import chat  # 导入本地模型接口
 
 pyautogui.FAILSAFE = True
@@ -29,19 +30,33 @@ class AiAutoReplier:
         self.wx_reply_window = settings["wx_reply_window"]
         
         self.wx_had_changed = False
-        self.message_history = [
-            {
-                "role": "system",
-                "content": settings["model.ai_system_prompt"]
-            }
-        ]
-        self.message_memory_rounds = settings["model.message_memory_rounds"]
         
+        # 分开存储系统提示和示例消息
+        self.system_prompt = {
+            "role": "system",
+            "content": settings["model.ai_system_prompt"]
+        }
+        self.examples = settings.get("model.message_examples", [])
+        
+        # 初始化对话历史
+        self.message_history = []
+        
+        self.message_memory_rounds = settings["model.message_memory_rounds"]
         
         self.log = logs.logging()
         
         self.thread_monitor_window = threading.Thread(target=self.monitor_window, daemon=True)
         self.thread_monitor_window.start()
+
+        # 注册退出时的回调函数
+        atexit.register(self.save_message_history)
+
+        # 添加上下文管理
+        self.context = {
+            "time_of_day": self.get_time_period(),
+            "last_topic": None,
+            "conversation_start_time": time.time()
+        }
 
     def get_window_content(self, region):
         """
@@ -181,6 +196,32 @@ class AiAutoReplier:
             except:
                 pass
 
+    def get_time_period(self):
+        """获取当前时间段"""
+        hour = time.localtime().tm_hour
+        if 5 <= hour < 12:
+            return "早上"
+        elif 12 <= hour < 14:
+            return "中午"
+        elif 14 <= hour < 18:
+            return "下午"
+        else:
+            return "晚上"
+
+    def analyze_topic(self, message):
+        """简单的主题分析"""
+        keywords = {
+            "学习": ["考试", "作业", "课程", "学习", "复习"],
+            "生活": ["吃饭", "睡觉", "天气", "心情"],
+            "娱乐": ["游戏", "电影", "音乐", "运动"],
+            # 可以添加更多主题
+        }
+        
+        for topic, words in keywords.items():
+            if any(word in message for word in words):
+                return topic
+        return None
+        
     def handle_message(self):
         """处理新消息并使用本地模型回复"""
         try:
@@ -200,17 +241,36 @@ class AiAutoReplier:
                 
             self.log.log(f"收到消息: {message}")
             
-            # 使用本地模型生成回复
-            self.message_history.append({"role": "user", "content": message})
-            self.log.log(f'模型对话历史新增输入：{{"role": "user", "content": "{message}"}}', "model")
-
-            last_n = max(len(self.message_history) - self.message_memory_rounds, 1)
-            messages_to_send = self.message_history[:1] + self.message_history[last_n:]
+            # 分析主题并维持连续性
+            current_topic = self.analyze_topic(message)
+            if current_topic and current_topic == self.context["last_topic"]:
+                # 如果主题连续，添加连续性提示
+                self.message_history.append({
+                    "role": "system",
+                    "content": f"继续关于{current_topic}的话题"
+                })
+            self.context["last_topic"] = current_topic
+            
+            # 根据上下文调整系统提示
+            current_time = self.get_time_period()
+            if current_time != self.context["time_of_day"]:
+                self.context["time_of_day"] = current_time
+                time_prompt = f"现在是{current_time}，"
+                self.message_history.append({
+                    "role": "system",
+                    "content": time_prompt
+                })
+            
+            # 构建完整的消息列表
+            self.message_history.append({"role": "user", "content": message})  # 添加用户消息
+            last_n = max(len(self.message_history) - self.message_memory_rounds, 0)
+            messages_to_send = [self.system_prompt] + self.examples + self.message_history[last_n:]
+            
             self.log.log(f'模型对话历史传入：{str(messages_to_send)}', "model")
-
             response = chat(messages_to_send)
+            
+            # 只将实际对话添加到历史记录
             self.message_history.append({"role": "assistant", "content": response})
-            self.log.log(f'模型对话历史新增回复：{{"role": "assistant", "content": "{response}"}}', "model")
             
             # 发送回复
             pyautogui.moveTo(self.wx_send_coordinate[0], self.wx_send_coordinate[1])
@@ -271,6 +331,15 @@ class AiAutoReplier:
         except (KeyboardInterrupt, pyautogui.FailSafeException):
             self.log.log("程序已停止", "key")
             exit(0)
+
+    def save_message_history(self):
+        """在程序退出时保存对话历史"""
+        try:
+            self.log.log("程序退出，保存对话历史...", "key")
+            self.log.log(f"完整对话历史：{str(self.message_history)}", "model")
+            self.log.log(f"最终日志已保存", "key")
+        except:
+            pass  # 确保这个函数不会抛出异常
 
 if __name__ == "__main__":
     replier = AiAutoReplier()

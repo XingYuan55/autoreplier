@@ -4,13 +4,13 @@ import json
 MODEL = 'qwen2.5:1.5b'
 
 def chat(messages, params=None):
-    # 默认参数
+    # 调整默认参数使回复更自然
     default_params = {
         'options': {
-            'temperature': 0.7,    # 控制随机性 (0-1)
-            'top_p': 0.9,         # 控制采样范围
-            'top_k': 40,          # 控制候选token数量
-            'num_predict': 512,    # 最大生成长度
+            'temperature': 0.8,    # 提高温度使输出更有创造性
+            'top_p': 0.95,        # 略微提高采样范围
+            'top_k': 50,          # 增加候选token数量
+            'num_predict': 512,    # 保持不变
         }
     }
     # 如果传入了参数，更新默认参数
