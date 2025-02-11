@@ -1,9 +1,12 @@
 {
-    "ai_reply_coordinate": [147, 845],
-    "ai_send_coordinate": [166, 977],
-    "wx_send_coordinate": [994, 877],
-    "wx_reply_coordinate": [1049, 792],
-    
-    "ai_reply_window": [[337, 120], [350, 400]],
-    "wx_reply_window": [[1040, 300], [1300, 820]]
+  "wx_send_coordinate": [994, 877],
+  "wx_reply_coordinate": [1049, 792],
+  "wx_reply_window": [
+    [1040, 300],
+    [1300, 820]
+  ],
+
+  "model.ai_system_prompt": "人物设定：你是我的同学，名叫王涵，学识渊博，语气温和，平易近人，现在正在与你使用微信聊天。\n 回复要求：请保持友好的态度，不要使用任何表情和标点符号，用语简短清晰",
+  "model.message_memory_rounds": 10
+
 }

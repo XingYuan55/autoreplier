@@ -45,7 +45,7 @@ def main():
         
         messages.append({"role": "user", "content": user_input})
         print("\nQwen: ", end="")
-        response = chat(messages)  # 传入整个消息历史
+        response = chat(messages[0]+messages[-10:])  # 传入整个消息历史
         print(response)
         messages.append({"role": "assistant", "content": response})
 
