@@ -103,4 +103,48 @@ class ChatSession:
         """重置所有状态"""
         self.had_change = False
         self.stable_count = 0
-        self.last_image = self.window.get_window_content() 
+        self.last_image = self.window.get_window_content()
+
+    def monitor_changes(self, check_interval=1.0):
+        """
+        监控窗口变化
+        
+        参数:
+            check_interval: 检查间隔时间（秒）
+            
+        返回:
+            status: 监控状态
+                - "changed": 检测到新变化
+                - "stable": 内容已稳定
+                - "cooling": 正在冷却
+                - "unchanged": 无变化
+        """
+        try:
+            current_image = self.window.get_window_content()
+            
+            # 检查是否有变化
+            if not self.window.images_equal(current_image, self.last_image):
+                self.window.log.log(f"{self.window.name} 窗口正在变化...", level="state")
+                self.last_image = current_image
+                self.stable_count = 0
+                self.had_change = True
+                return "changed"
+            
+            # 检查是否稳定（降低稳定性要求）
+            if self.had_change:
+                self.stable_count += 1
+                if self.stable_count >= 1:  # 从 2 降到 1，加快响应速度
+                    self.had_change = False
+                    return "stable"
+            
+            # 检查冷却时间
+            if not self.can_send_message():
+                remaining = self.cooldown - (time.time() - self.last_send_time)
+                self.window.log.log(f"{self.window.name} 冷却中，还需等待 {remaining:.1f} 秒")
+                return "cooling"
+                
+            return "unchanged"
+            
+        except Exception as e:
+            self.window.log.log(f"{self.window.name} 监控出错: {e}", "error")
+            return "error" 

@@ -122,16 +122,16 @@ class ChatWindow:
         try:
             self.clear_clipboard()
             pyautogui.moveTo(self.reply_coordinate[0], self.reply_coordinate[1])
-            time.sleep(0.3)
+            time.sleep(0.2)
             
             if copy_by_button:
                 pyautogui.click()
-                time.sleep(0.5)  # 等待复制完成
+                time.sleep(0.3)
             else:
                 pyautogui.click(clicks=clicks)
-                time.sleep(0.3)
+                time.sleep(0.2)
                 pyautogui.hotkey('ctrl', 'c')
-                time.sleep(0.5)
+                time.sleep(0.3)
                 
             content = self.get_clipboard_content()
             self.log.log(f"{self.name} 复制内容: [{content}]")
@@ -144,18 +144,17 @@ class ChatWindow:
         """发送消息"""
         try:
             pyautogui.moveTo(self.send_coordinate[0], self.send_coordinate[1])
-            time.sleep(0.2)
+            time.sleep(0.1)
             pyautogui.click()
-            time.sleep(0.2)
+            time.sleep(0.1)
             
-            # 将消息写入剪贴板并发送
             self.clear_clipboard()
             win32clipboard.OpenClipboard()
             win32clipboard.SetClipboardText(message, win32clipboard.CF_UNICODETEXT)
             win32clipboard.CloseClipboard()
             
             pyautogui.hotkey('ctrl', 'v')
-            time.sleep(0.2)
+            time.sleep(0.1)
             pyautogui.press('enter')
             self.log.log(f"{self.name} 发送消息: {message}")
             return True

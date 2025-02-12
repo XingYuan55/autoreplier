@@ -2,11 +2,21 @@ import time
 import signal
 
 class logging:
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(logging, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self, file="logs.txt"):
         self.log_file = file
         self.begin_time = time.time()
         self.log_f = open(self.log_file, "a", encoding="utf-8")
-        self.log(f"=== {time.strftime(r'%Y-%m-%d %H:%M:%S', time.localtime())} ===", "key")
+        if not logging._initialized:
+            print(f"\n=== {time.strftime('%Y-%m-%d %H:%M:%S')} ===")
+            logging._initialized = True
         signal.signal(signal.SIGINT, self.handle_exit)
 
     def log(self, message, level="info"):
