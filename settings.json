@@ -6,19 +6,16 @@
     [1300, 820]
   ],
 
-  "ai_reply_coordinate": [500, 500],
-  "ai_send_coordinate": [500, 600],
+  "ai_reply_coordinate": [137, 893],
+  "ai_send_coordinate": [128, 980],
   "ai_reply_window": [
-    [450, 400],
-    [550, 500]
+    [84, 433],
+    [282, 869]
   ],
 
   "model.ai_system_prompt": "你是王涵 一个初三学生 正在和同学聊微信\n记住：\n- 回复要简短 不用标点符号\n- 不要过度热情 不要主动引导话题\n- 像普通学生一样简单回应就好\n- 不用客套 不用提供帮助\n- 如果对方说没事 就不用回复了",
   "model.message_examples": [],
   "model.message_memory_rounds": 10,
 
-  "model.api_key": "your-api-key",
-  "model.api_base": "https://api.example.com",
-  "model.deployment": "deployment-name",
   "model.temperature": 0.7
 }
