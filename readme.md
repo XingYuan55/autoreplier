@@ -8,21 +8,25 @@
 ### 主要特点 | Key Features
 
 1. **智能消息监控 | Intelligent Message Monitoring**
+
    - 实时监控微信消息
    - 支持多种消息类型处理
    - 智能识别会话上下文
 
 2. **AI 驱动对话 | AI-Powered Conversations**
+
    - 自动将消息转发给 AI 处理
    - 智能生成符合上下文的回复
    - 保持对话的连贯性和自然度
 
 3. **中文优化 | Chinese Language Support**
+
    - 完整的中文支持
    - 针对中文对话场景优化
    - 适配中文输入输出
 
 4. **剪贴板管理 | Clipboard Management**
+
    - 智能剪贴板操作
    - 自动文本复制粘贴
    - 多格式内容支持
@@ -42,7 +46,7 @@
 ### 优势特色 | Advantages
 
 1. 🚀 快速部署：简单配置即可使用
-2. 💡 智能对话：基于AI的自然语言处理
+2. 💡 智能对话：基于 AI 的自然语言处理
 3. 🛡️ 稳定可靠：内置故障保护机制
 4. 🔄 灵活扩展：支持自定义规则和处理流程
 
@@ -73,19 +77,20 @@ graph TD
 
 #### 消息捕获机制 | Message Capture
 
-   - 通过预设的快捷键触发消息捕获
-   - 使用 Win32 API 监控剪贴板变化
-   - 自动识别消息窗口位置
+- 通过预设的快捷键触发消息捕获
+- 使用 Win32 API 监控剪贴板变化
+- 自动识别消息窗口位置
 
 #### 鼠标控制流程 | Mouse Control Flow
-   - 使用 PyAutoGUI 库实现鼠标自动化控制
-   - 预设关键位置坐标（消息框、发送按钮等）
-   - 执行精确的点击和拖拽操作
+
+- 使用 PyAutoGUI 库实现鼠标自动化控制
+- 预设关键位置坐标（消息框、发送按钮等）
+- 执行精确的点击和拖拽操作
 
 ### 日常使用建议 | Daily Usage Tips
 
-   - 定期检查坐标准确性
-   - 保持窗口布局稳定
+- 定期检查坐标准确性
+- 保持窗口布局稳定
 
 ## 使用要求
 
@@ -115,21 +120,32 @@ pip install pyautogui pygetwindow pillow pywin32
 4. 程序会自动处理新的微信消息
 5. 移动鼠标到屏幕角落或按 Ctrl+C 可停止程序
 
-
 ## 更新日志
 
-### 25021203-refactor+docs @ ver2.0.1-beta2: 封装控制鼠标和消息交互的代码，并在main.py中使用
+### 25021301-refactor @ ver2.0.1: 封装控制鼠标和消息交互的代码；提升响应速度
+
 ```bash
 commit (origin/feature/chat-window-interface)
 Author: Xingyuan55 <dus0963@outlook.com>
-Date:   Tue Feb 12 23:21 2025 +0800
+Date:   Thu Feb 13 16:20 2025 +0800
+
+   25021301-refactor @ ver2.0.1: 封装控制鼠标和消息交互的代码；提升响应速度
+```
+
+### 25021203-refactor+docs @ ver2.0.1-beta2: 封装控制鼠标和消息交互的代码，并在 main.py 中使用
+
+```bash
+commit (origin/feature/chat-window-interface)
+Author: Xingyuan55 <dus0963@outlook.com>
+Date:   Wed Feb 12 23:21 2025 +0800
 
    25021203-refactor @ ver2.0.1-beta3: 完善文档；封装控制鼠标和消息交互的代码，并在main.py中使用:
    将聊天窗口的基础底层封装到chat_window.py的ChatWindow类，将消息交互的完整流程封装到更高级的接口chat_session.py的ChatSession类。目前只重构好了main.py中的
    添加了README文档的项目介绍部分
 ```
 
-### 25021104-refactor+docs @ ver2.0:  添加本地部署模型（离线模式）
+### 25021104-refactor+docs @ ver2.0: 添加本地部署模型（离线模式）
+
 ```bash
 commit (HEAD -> master, origin/master, origin/feature/offline-model, feature/offline-model)
 Author: Xingyuan55 <dus0963@outlook.com>
@@ -226,19 +242,19 @@ settings.json 支持以下配置：
 
 1. 窗口坐标：
 
-   在线模式： 
+   在线模式：
 
-   - ai_reply_coordinate: AI 回复区域坐标 
+   - ai_reply_coordinate: AI 回复区域坐标
 
    - ai_send_coordinate: AI 发送框坐标
 
    - ai_reply_window: AI 窗口监控区域
 
-   通用： 
+   通用：
 
-   - wx_send_coordinate: 微信发送框坐标 
+   - wx_send_coordinate: 微信发送框坐标
 
-   - wx_reply_coordinate: 微信消息区域坐标 
+   - wx_reply_coordinate: 微信消息区域坐标
 
    - wx_reply_window: 微信监控区域范围
 
@@ -247,5 +263,5 @@ settings.json 支持以下配置：
    - model.ai_system_prompt: 系统提示词
 
    - model.message_memory_rounds: 记忆轮数
-   
+
    - model.message_examples: 示例对话（可选）
