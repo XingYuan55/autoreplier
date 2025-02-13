@@ -124,16 +124,18 @@ class ChatSession:
             
             # 检查是否有变化
             if not self.window.images_equal(current_image, self.last_image):
-                self.window.log.log(f"{self.window.name} 窗口正在变化...", level="state")
+                # 只有当状态从稳定变为不稳定时才记录日志
+                if not self.had_change:
+                    self.window.log.log(f"{self.window.name} 窗口正在变化...", level="state")
                 self.last_image = current_image
                 self.stable_count = 0
                 self.had_change = True
                 return "changed"
             
-            # 检查是否稳定（降低稳定性要求）
+            # 检查是否稳定
             if self.had_change:
                 self.stable_count += 1
-                if self.stable_count >= 1:  # 从 2 降到 1，加快响应速度
+                if self.stable_count >= 2:  # 改回2次检查，确保真的稳定
                     self.had_change = False
                     return "stable"
             
