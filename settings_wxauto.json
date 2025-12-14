@@ -1,0 +1,35 @@
+{
+  "listen_contacts": [
+    "文件传输助手",
+    "微信团队"
+  ],
+  
+  "ai_api": {
+    "enabled": false,
+    "api_key": "",
+    "api_url": "",
+    "model": "gpt-3.5-turbo",
+    "temperature": 0.7,
+    "max_tokens": 2000
+  },
+  
+  "auto_reply": {
+    "default_reply": "您好，我现在暂时无法回复，稍后会联系您。",
+    "keywords_reply": {
+      "你好": "您好！有什么可以帮助您的吗？",
+      "价格": "关于价格的详细信息，请访问我们的官网或联系客服。",
+      "谢谢": "不客气，随时为您服务！"
+    },
+    "enable_ai": false
+  },
+  
+  "message_filter": {
+    "ignore_keywords": ["广告", "推广"],
+    "ignore_system_messages": true
+  },
+  
+  "notification": {
+    "enable_sound": true,
+    "enable_desktop": false
+  }
+}

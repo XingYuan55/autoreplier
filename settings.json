@@ -1,0 +1,24 @@
+{
+  "wx_send_coordinate": [680, 823],
+  "wx_reply_coordinate": [736, 731],
+  "wx_reply_window": [
+    [666, 500],
+    [850, 753]
+  ],
+
+  "ai_reply_coordinate": [114, 848],
+  "ai_send_coordinate": [100, 929],
+  "ai_reply_window": [
+    [58, 461],
+    [282, 808]
+  ],
+
+  "model.ai_system_prompt": "",
+  "model.message_examples": [],
+  "model.message_memory_rounds": 10,
+
+  "model.temperature": 0.7,
+
+  "listen_contacts": ["文件传输助手"]
+}
+
