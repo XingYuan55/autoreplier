@@ -1,0 +1,5 @@
+npyscreen
+weixin-auto
+pyautogui
+pywin32
+Pillow
