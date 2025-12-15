@@ -1,3 +1,4 @@
+windows-curses
 npyscreen
 weixin-auto
 pyautogui
