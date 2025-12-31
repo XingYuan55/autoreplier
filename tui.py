@@ -60,6 +60,7 @@ class ACBForm(npyscreen.Form):
             height=self.upper_height,
             editable = False
         )
+
         self.ai_box = self.add(
             npyscreen.BoxTitle,
             name="AI窗口设置",
@@ -90,165 +91,219 @@ class ACBForm(npyscreen.Form):
 
 
     def initialize_widgets(self):
-
+        # ===== 微信组件：独立纵向坐标，确保正常显示+有序排列 =====
         wx_start_relx = self.left_start_relx + 2
-        wx_start_rely = self.upper_start_rely + 2
-        # 微信输入框坐标 wx_send_coordinate [x, y]
+        wx_current_rely = self.upper_start_rely + 2  # 初始化纵向坐标
+
+        # 微信输入框坐标
         self.wx_send_coordinate_note = self.add(
             npyscreen.FixedText,
             value="微信输入框坐标 wx_send_coordinate [x, y]",
             relx=wx_start_relx,
-            rely=wx_start_rely,
-            max_width = self.half_width-6,
-
+            rely=wx_current_rely,
+            max_width=self.half_width - 6,
         )
+        wx_current_rely += 1  # 换行
 
         self.wx_send_coordinate_x = self.add(
             npyscreen.TitleText,
             name="  - x:",
-            # relx=wx_start_relx,
             relx=wx_start_relx,
+            rely=wx_current_rely,
             max_width=20,
-
         )
+        wx_current_rely += 1  # 换行
+
         self.wx_send_coordinate_y = self.add(
             npyscreen.TitleText,
             name="  - y:",
             relx=wx_start_relx,
+            rely=wx_current_rely,
             max_width=20,
-
         )
-        
-        self.add(npyscreen.FixedText, name="")
-        
-        # 微信来信坐标 wx_reply_coordinate [x, y]
+        wx_current_rely += 3  
+
+        # 微信来信坐标
         self.wx_reply_coordinate_note = self.add(
             npyscreen.FixedText,
             value="微信来信坐标 wx_reply_coordinate [x, y]",
             relx=wx_start_relx,
-            max_width = self.half_width-6,
-
+            rely=wx_current_rely,
+            max_width=self.half_width - 6,
         )
+        wx_current_rely += 1  # 换行
+
         self.wx_reply_coordinate_x = self.add(
             npyscreen.TitleText,
             name="  - x:",
             relx=wx_start_relx,
+            rely=wx_current_rely,
             max_width=20,
-        
         )
+        wx_current_rely += 1  # 换行
+
         self.wx_reply_coordinate_y = self.add(
             npyscreen.TitleText,
-            relx=wx_start_relx ,
+            relx=wx_start_relx,
             name="  - y:",
+            rely=wx_current_rely,
             max_width=20,
-
         )
-        
-        self.add(npyscreen.FixedText, name="")
-               
-        
-        # 微信来信监视区域 wx_reply_coordinate [[x1, y1], [x2, y2]]
+        wx_current_rely += 3  
+
+        # 微信来信监视区域
         self.wx_reply_window_note = self.add(
             npyscreen.FixedText,
             value="微信来信监视区域 wx_reply_coordinate [[x1, y1], [x2, y2]]",
             relx=wx_start_relx,
-            max_width=self.half_width-6,
-
+            rely=wx_current_rely,
+            max_width=self.half_width - 6,
         )
+        wx_current_rely += 1  # 换行
+
         self.wx_reply_window_x1 = self.add(
             npyscreen.TitleText,
             name="  - x1:",
             max_width=20,
-            relx=wx_start_relx
+            relx=wx_start_relx,
+            rely=wx_current_rely,
         )
+        wx_current_rely += 1  # 换行
+
         self.wx_reply_window_y1 = self.add(
             npyscreen.TitleText,
             name="  - y1:",
             relx=wx_start_relx,
+            rely=wx_current_rely,
             max_width=20,
-
         )
+        wx_current_rely += 2  # 换行
+
         self.wx_reply_window_x2 = self.add(
             npyscreen.TitleText,
             name="  - x2:",
             relx=wx_start_relx,
+            rely=wx_current_rely,
             max_width=20,
-
         )
+        wx_current_rely += 1  # 换行
+
         self.wx_reply_window_y2 = self.add(
             npyscreen.TitleText,
             name="  - y2:",
             relx=wx_start_relx,
+            rely=wx_current_rely,
             max_width=20,
-
         )
-            
-            
-        
-        # self.ai_send_coordinate_note = self.add(
-        #     npyscreen.FixedText,
-        #     value="AI输入框坐标 ai_send_coordinate [x, y]"
-        # )
-        # self.ai_send_coordinate_x = self.add(
-        #     npyscreen.TitleText,
-        #     name="  - x:",
+        wx_current_rely += 1  # 换行
 
-        # )
-        # self.ai_send_coordinate_y = self.add(
-        #     npyscreen.TitleText,
-        #     name="  - y:",
+        # ===== AI组件：独立纵向坐标，与微信组件无关联，确保操作便捷 =====
+        ai_start_relx = self.right_start_relx + 2
+        ai_current_rely = self.upper_start_rely + 2  # 独立初始化，不依赖微信坐标
 
-        # )
+        # AI输入框坐标
+        self.ai_send_coordinate_note = self.add(
+            npyscreen.FixedText,
+            value="AI输入框坐标 ai_send_coordinate [x, y]",
+            relx=ai_start_relx,
+            rely=ai_current_rely,
+            max_width=self.half_width - 6,
+        )
+        ai_current_rely += 1  # 换行
 
-        # self.add(npyscreen.FixedText, value="") 
+        self.ai_send_coordinate_x = self.add(
+            npyscreen.TitleText,
+            name="  - x:",
+            relx=ai_start_relx,
+            rely=ai_current_rely,
+            max_width=20,
+        )
+        ai_current_rely += 1  # 换行
 
-        # # AI来信坐标 ai_reply_coordinate [x, y]
-        # self.ai_reply_coordinate_note = self.add(
-        #     npyscreen.FixedText,
-        #     value="AI来信坐标 ai_reply_coordinate [x, y]"
-        # )
-        # self.ai_reply_coordinate_x = self.add(
-        #     npyscreen.TitleText,
-        #     name="  - x:",
+        self.ai_send_coordinate_y = self.add(
+            npyscreen.TitleText,
+            name="  - y:",
+            relx=ai_start_relx,
+            rely=ai_current_rely,
+            max_width=20,
+        )
+        ai_current_rely += 3
 
-        # )
-        # self.ai_reply_coordinate_y = self.add(
-        #     npyscreen.TitleText,
-        #     name="  - y:",
+        # AI来信坐标
+        self.ai_reply_coordinate_note = self.add(
+            npyscreen.FixedText,
+            value="AI来信坐标 ai_reply_coordinate [x, y]",
+            relx=ai_start_relx,
+            rely=ai_current_rely,
+            max_width=self.half_width - 6,
+        )
+        ai_current_rely += 1  # 换行
 
-        # )
+        self.ai_reply_coordinate_x = self.add(
+            npyscreen.TitleText,
+            name="  - x:",
+            relx=ai_start_relx,
+            rely=ai_current_rely,
+            max_width=20,
+        )
+        ai_current_rely += 1  # 换行
 
-        # self.add(npyscreen.FixedText, value="")  # 同样建议用value而非name
+        self.ai_reply_coordinate_y = self.add(
+            npyscreen.TitleText,
+            relx=ai_start_relx,
+            name="  - y:",
+            rely=ai_current_rely,
+            max_width=20,
+        )
+        ai_current_rely += 3
 
-        # # AI来信监视区域 ai_reply_coordinate [[x1, y1], [x2, y2]]
-        # self.ai_reply_window_note = self.add(
-        #     npyscreen.FixedText,
-        #     value="AI来信监视区域 ai_reply_coordinate [[x1, y1], [x2, y2]]"
-        # )
-        # self.ai_reply_window_x1 = self.add(
-        #     npyscreen.TitleText,
-        #     name="  - x1:",
+        # AI来信监视区域
+        self.ai_reply_window_note = self.add(
+            npyscreen.FixedText,
+            value="AI来信监视区域 ai_reply_coordinate [[x1, y1], [x2, y2]]",
+            relx=ai_start_relx,
+            rely=ai_current_rely,
+            max_width=self.half_width - 6,
+        )
+        ai_current_rely += 1  # 换行
 
-        # )
-        # self.ai_reply_window_y1 = self.add(
-        #     npyscreen.TitleText,
-        #     name="  - y1:",
-        # )
-        # self.ai_reply_window_x2 = self.add(
-        #     npyscreen.TitleText,
-        #     name="  - x2:",
+        self.ai_reply_window_x1 = self.add(
+            npyscreen.TitleText,
+            name="  - x1:",
+            max_width=20,
+            relx=ai_start_relx,
+            rely=ai_current_rely,
+        )
+        ai_current_rely += 1  # 换行
 
-        # )
-        # self.ai_reply_window_y2 = self.add(
-        #     npyscreen.TitleText,
-        #     name="  - y2:",
-        # )
-                
-                
-        
-            
-        
-    
+        self.ai_reply_window_y1 = self.add(
+            npyscreen.TitleText,
+            name="  - y1:",
+            relx=ai_start_relx,
+            rely=ai_current_rely,
+            max_width=20,
+        )
+        ai_current_rely += 2  # 换行
+
+        self.ai_reply_window_x2 = self.add(
+            npyscreen.TitleText,
+            name="  - x2:",
+            relx=ai_start_relx,
+            rely=ai_current_rely,
+            max_width=20,
+        )
+        ai_current_rely += 1  # 换行
+
+        self.ai_reply_window_y2 = self.add(
+            npyscreen.TitleText,
+            name="  - y2:",
+            relx=ai_start_relx,
+            rely=ai_current_rely,
+            max_width=20,
+        )
+        ai_current_rely += 1  # 换行
+
+
 class ACBApp(npyscreen.NPSAppManaged):
     def onStart(self):
         self.addForm("MAIN", ACBForm, name="AutoConvoBridge")
