@@ -3,8 +3,8 @@ import time
 import pyautogui
 import logs
 import json
-from chat_window import ChatWindow
-from chat_session import ChatSession
+from chat_core.chat_window import ChatWindow
+from chat_core.chat_session import ChatSession
 
 pyautogui.FAILSAFE = True
 

@@ -5,8 +5,8 @@ import logs
 import json
 import atexit
 from model.inference import chat
-from chat_window import ChatWindow
-from chat_session import ChatSession
+from chat_core.chat_window import ChatWindow
+from chat_core.chat_session import ChatSession
 
 pyautogui.FAILSAFE = True
 
