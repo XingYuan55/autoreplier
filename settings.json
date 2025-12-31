@@ -13,3 +13,40 @@
     [282, 808]
   ]
 }
+
+
+# 微信输入框坐标 wx_send_coordinate [x, y]
+        self.wx_send_coordinate_x = self.add(
+            npyscreen.TitleText,
+            name="微信输入框 𝑥坐标",
+            max_width=int(self.left_col_width // 2),
+
+        )
+        self.wx_send_coordinate_y = self.add(
+            npyscreen.TitleText,
+            name="微信输入框 𝑦坐标",
+            max_width=int(self.left_col_width // 2),
+
+        )
+        
+        # 微信来信坐标 wx_reply_coordinate [x, y]
+        self.wx_reply_coordinate_x = self.add(
+            npyscreen.TitleText,
+            name="微信来消息 𝑥坐标",
+            max_width=int(self.left_col_width // 2),
+
+        )
+        self.wx_reply_coordinate_y = self.add(
+            npyscreen.TitleText,
+            name="微信来消息 𝑦坐标",
+            max_width=int(self.left_col_width // 2),
+
+        )
+        
+        # 微信来信监视区域 wx_reply_window [[x1, y1], [x2, y2]]
+        self.wx_reply_window_left_top_x=self.add(
+            npyscreen.TitleText,
+            name="微信来信监视区左上角𝑥",
+            max
+        )
+        
